@@ -13,6 +13,16 @@ def test_homepage(monkeypatch):
        assert response.status_code == 200
        api_mock.assert_called_once_with('movie/popular')
 
+@pytest.mark.parametrize("list_type", LIST_TYPES)
+def test_homepage_with_list_types(monkeypatch, list_type):
+    api_mock = Mock(return_value={'results': []})
+    monkeypatch.setattr("main.homepage", api_mock)
+
+    with app.test_client() as client:
+        response = client.get(f'/?list_type={list_type}')
+        assert response.status_code == 200
+        api_mock.assert_called_once_with(f'movie/{list_type}')
+
 def test_get_movie_images(monkeypatch):
     mock_movie_images = ["dummy1", "dummy2"]
 
